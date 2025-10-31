@@ -1,5 +1,7 @@
 <?php
 
+//CONTROLADOR PRINCIPAL DE AUTENTICCION Y DE LOGIE DEL SISTEMA
+
 namespace App\Http\Controllers;
 
 use Endroid\QrCode\Builder\Builder;
