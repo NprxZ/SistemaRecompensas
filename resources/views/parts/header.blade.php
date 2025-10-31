@@ -1,7 +1,7 @@
 <header>
 
         <div class="contenedor_logo">
-            <img width="30%" src="images/principal4.jpg" alt="imagen_logo">
+            <img width="15%" src="{{ asset('images/sistema2.webp') }}" alt="imagen_logo">
         </div>
 
 </header>

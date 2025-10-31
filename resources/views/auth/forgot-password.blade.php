@@ -19,12 +19,18 @@
                     
                     <p>Ingresa tu correo electrónico y te enviaremos tu contraseña.</p>
                     
-                    <form action="{{ route('password.email') }}" method="POST">
+                    <form action="{{ route('auth.password.email') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Correo electrónico</label>
                             <input type="email" name="email" class="form-control" 
                                    placeholder="correo@gmail.com" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Numero de Placa</label>
+                            <input type="text" name="plate_number" class="form-control" 
+                                   placeholder="AAA-444" required>
                         </div>
                         
                         <button type="submit" class="btn btn-primary w-100 mb-3">

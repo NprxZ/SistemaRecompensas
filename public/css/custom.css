@@ -1,18 +1,18 @@
 .contenedor_logo {
     margin: 0%;
-    background-image: url("../images/principal2.png");
+    background-image: url("../images/sistema1.jpg");
     text-align: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size:cover;
     width: 100%;
+    
 }
 
 .boton-de-login{
     margin: auto 2rem;
-    padding: 0.5rem;
     border-radius: 0.5rem;
     color: white;
-    background-color: rgb(68, 68, 68);
+    background-color: rgb(66, 10, 32);
     font-weight: bolder;
     text-decoration: none;
     text-transform: none;
@@ -23,9 +23,15 @@
     color: white;
 }
 
+.dropdown{
+    font-weight: bolder !important;
+}
+
+
+
 #cont_principal{
     /*background-image: url("../images/principal6.jpg");*/
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
     background-repeat: no-repeat;
     background-size: cover;
     padding-bottom: 2%;
@@ -40,8 +46,9 @@
 
 .navegacion {
     color: white !important;
-    padding: 0%;
-    background-color: black !important;
+    padding: 0% !important;
+    background-color: rgba(97, 18, 50) !important;
+    margin: 0% !important;
     margin-left: 0%;
     margin-right: 0%;
 
@@ -49,14 +56,20 @@
 
 .navegacion_item {
     font-family: "Unbounded", sans-serif;
-    background-color: black !important;
-    color: white !important;
+    background-color:rgba(97, 18, 50) !important;
+    color: rgb(255, 255, 255) !important;
     padding: 5% 6%;
-    font-weight: lighter;
+    font-weight: normal;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
 
 .navegacion_item:hover {
-    background-color: rgb(193, 185, 185) !important;
+    background-color: rgb(161, 30, 82) !important;
+}
+
+.navegacion_item_color{
+    color:white !important;
 }
 
 .letra_logo {
@@ -64,15 +77,15 @@
     font-size: 2.1rem;
     margin-left: 6%;
     margin-right: 6%;
+    color:rgb(207, 39, 106) ;
 }
 
-.navegacion_item_color:hover{
-    color: black;
-}
 
 .tsukitones_diseno_principal {
- color: rgb(94, 184, 211);
+ color: rgb(255, 255, 255) ;
  font-weight: Bolder;
+ font-size: 3.3rem;
+ font-family:monospace;
 }
 
 .boton_buscar {
@@ -114,14 +127,15 @@
 
 .etiqueta_footer1 {
     color: white;
-    font-size: 0.8rem;
+    font-size: 0.97rem;
     font-weight: lighter;
 }
 
 footer {
-    background-color: black !important;
-    font-family: "Unbounded", sans-serif;
+    background-color: rgba(97, 18, 50) !important;
+    font-family: sans-serif;
     color: white;
+    font-size: 1.3rem;
 }
 
 .btn-primary {
@@ -157,11 +171,11 @@ footer {
 }
 
 .contorno_titulo_cartas {
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(131, 24, 67);
     text-align: center;
     border-radius: 1rem;font-size: 1.5rem;
     font-family: "Unbounded", sans-serif;
-    color: white;
+    color: rgb(252, 252, 252) !important;
 }
 
 .contorno_titulo_lista {
@@ -298,7 +312,7 @@ footer {
     padding-left: 1rem;
     padding-right: 1rem;
     margin: 0%;
-    margin-bottom: 0.3rem;
+    margin-top: 0.3rem;
     margin-left: 0.2rem;
     font-family: "Unbounded", sans-serif;
     box-shadow: 0px 4px 10px rgb(33, 32, 32);
@@ -341,6 +355,23 @@ footer {
     font-family: "Unbounded", sans-serif;
     font-size: 0.8rem;
     box-shadow: 0px 4px 10px rgb(33, 32, 32);
+}
+
+/* Badges en las tarjetas de recompensas */
+/* Badge de categoría - Arriba derecha */
+.marca_album.marca_artista {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+/* Badge de disponibilidad - Abajo izquierda */
+.marca_formato.formato_artista {
+    position: absolute;
+    top: 200px;  /* Desde abajo */
+    left: 10px;
+    z-index: 10;
 }
 
 .info_descripcion {
@@ -422,7 +453,7 @@ footer {
 }
 
 .formato_artista {
-    background-color: rgba(0, 0, 255, 0.684);
+    background-color: rgba(170, 37, 66, 0.438);
 } 
 
 .edit_artistas {
@@ -442,7 +473,7 @@ footer {
 
 .marca_artista {
     margin: 0;
-    background-color: rgba(71, 70, 70, 0.779);
+    background-color: rgba(71, 70, 70, 0.397);
     border-radius: 0.2rem;
     color: rgba(144, 140, 140, 0.896);
     font-size: 0.8rem;
@@ -711,7 +742,7 @@ footer {
 
 /* Contenedor principal del modal */
 .cuadro-login {
-    background: #000000 !important;
+    background: rgb(90, 16, 46) !important;
     border-radius: 12px;
     border: none;
     color: #fff;
@@ -747,38 +778,42 @@ s
     margin-left: 0.5rem;
 }
 
+.text-muted{
+    color:white !important;
+}
+
 /* Inputs */
 .input-modal {
-    background: #0f1419 !important;
+    background: rgb(65, 12, 33) !important;
     border: 1px solid #2a2a3e !important;
     border-radius: 8px;
     padding: 0.75rem 1rem;
-    color: #fff !important;
+    color: #ffffff !important;
     font-size: 0.95rem;
 }
 
 .input-modal:focus {
-    background: #0f1419 !important;
-    border-color: #00d9ff !important;
-    box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.1) !important;
+    background: #190f13 !important;
+    border-color: rgb(65, 13, 34) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 149, 0.1) !important;
     color: #fff !important;
 }
 
 .input-modal::placeholder {
-    color: #6b6b7b;
+    color: #c6c6d1;
 }
 
 /* Checkboxes */
 .check-modal {
     background-color: transparent !important;
-    border: 2px solid #00d9ff !important;
+    border: 2px solid #ff00c8 !important;
     width: 1.2rem;
     height: 1.2rem;
 }
 
 .check-modal:checked {
-    background-color: #00d9ff !important;
-    border-color: #00d9ff !important;
+    background-color: #cc00ff !important;
+    border-color: #e100ff !important;
 }
 
 /* Enlaces */
@@ -790,18 +825,18 @@ s
 }
 
 .link-forgot:hover {
-    color: #00d9ff;
+    color: rgb(201, 74, 124);
 }
 
 .link-register {
-    color: #00d9ff;
+    color: rgb(187, 136, 156);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s;
 }
 
 .link-register:hover {
-    color: #00a8cc;
+    color: rgb(214, 148, 174);
 }
 
 /* Caja de Cloudflare */
@@ -822,13 +857,13 @@ s
 
 /* Botón principal de login */
 .btn-login-modal {
-    background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
+    background: linear-gradient(135deg, rgb(173, 63, 107) 0%, rgb(170, 40, 92) 100%);
     border: none;
     border-radius: 8px;
     padding: 0.85rem;
     font-weight: 600;
     font-size: 1rem;
-    color: #000;
+    color: rgb(255, 255, 255);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -967,6 +1002,14 @@ s
 
 }
 
+.nav-link{
+    color:rgb(189, 133, 155);
+}
+
+.nav-link:hover{
+    color:rgb(231, 231, 231);
+}
+
 .nav-boton-formato{
     text-align: center;
     text-decoration: none;
@@ -977,10 +1020,10 @@ s
     vertical-align: middle;
     margin-left:  0.25rem;
     margin-right: 0.25rem;
-    background-color: #30344a;
+    background-color: rgba(97, 18, 50);
     padding:0.6rem 0.82rem;
     border-radius: 0.5rem;
-    border: 1px solid #30344a;
+    border: 1px solid rgba(97, 18, 50);
     transition: background-color 0.11s ease;
 }
 
@@ -993,8 +1036,8 @@ s
   padding-left: 50px; 
   height: 40px;
   border-radius: 2rem;
-  background-color: #212433;
-  border: 1px solid #9295af;
+  background-color: #95959e;
+  border: 1px solid rgb(65, 12, 33);
   color: #7f829f;
   outline: none;
 }
@@ -1009,7 +1052,7 @@ s
 
 .boton-filtro{
  position: absolute;
- background-color:#30344a;
+ background-color:rgb(83, 15, 42);
  color:#a7acd1;
  padding: 1% 5%;
  font-size: 0.8rem;

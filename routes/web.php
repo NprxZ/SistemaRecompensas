@@ -1,235 +1,115 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+//RURAS DE LAS SECCIONES DEL SISTEMA DE RECOMPENSAS
+
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\RecompensasController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EstadisticasController;
-use App\Http\Controllers\AdministradorController;
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\ControllerEmpleado;
-use App\Http\Controllers\ControllerEmpleado_normal;
-use App\Http\Controllers\CatalogController;
-use App\Http\Controllers\ActorController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\CustomerController_a;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\RentController;
-use App\Http\Controllers\FilmController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\StoreController;
-use App\Http\Controllers\EmpleadoController;
-use App\Http\Controllers\AdminCustomerController;
-use App\Http\Controllers\OtroCustomerController;
-use App\Http\Controllers\RentalController_avanzado;
-use App\Http\Controllers\FilmController_filter;
+use App\Http\Controllers\ActividadesAdminController;
+use App\Http\Controllers\AdministradoresController;
+use App\Http\Controllers\CanjesAdminController;
+use App\Http\Controllers\RecompensasAdminController;
+use App\Http\Controllers\ReportesController;
+use App\Http\Controllers\UsuariosAdminController;
+use Illuminate\Support\Facades\Route;
 
-// ============================================
-// RUTA PÚBLICA (sin autenticación)
-// ============================================
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// ============================================
-// RUTAS DE AUTENTICACIÓN (sin middleware)
-// ============================================
 Route::prefix('auth')->name('auth.')->group(function () {
-    // Empleados
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
-    // Clientes
-    Route::post('/cliente/login', [AuthController::class, 'loginCliente'])->name('cliente.login');
-    Route::post('/cliente/logout', [AuthController::class, 'logoutCliente'])->name('cliente.logout');
-    Route::post('/cliente/register', [AuthController::class, 'registerCliente'])->name('cliente.register');
+    // Administradores
+    Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login');
+    Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
     
-    // Verificación de sesión
+    // Usuarios (Conductores)
+    Route::post('/usuario/login', [AuthController::class, 'loginUsuario'])->name('usuario.login');
+    Route::post('/usuario/logout', [AuthController::class, 'logoutUsuario'])->name('usuario.logout');
+    Route::post('/usuario/register', [AuthController::class, 'registerUsuario'])->name('usuario.register');
+    
+    // Recuperación de contraseña
+    Route::get('/password/reset', [AuthController::class, 'showForgotForm'])->name('password.request');
+    Route::post('/password/reset', [AuthController::class, 'sendResetLink'])->name('password.email');
+    
+    // Verificación de sesión (API)
     Route::get('/check', [AuthController::class, 'check'])->name('check');
 });
 
-// ============================================
-// RECUPERACIÓN DE CONTRASEÑA (sin middleware)
-// ============================================
-Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('password.request');
-Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+//RUTA POR DEFECTO
 
-// ============================================
-// RUTAS PROTEGIDAS - EMPLEADO (cualquier empleado)
-// ============================================
-Route::middleware(['staff'])->group(function () {
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+//RUTAS DE LOS USUARIOS
+
+Route::middleware(['auth.user'])->prefix('usuario')->name('usuario.')->group(function () {
     
-    // Dashboard de empleado
-    Route::get('/empleado_normal', [ControllerEmpleado_normal::class, 'index'])->name('empleado');
-    Route::get('/empleado', [EmpleadoController::class, 'index'])->name('empleado');
-    Route::get('/empleado/dashboard', [EmpleadoController::class, 'index'])->name('empleado.dashboard');
-    Route::get('/empleado/historial-accesos', [EmpleadoController::class, 'historialAccesos'])->name('empleado.historial-accesos');
-    Route::get('/empleado/mis-accesos', [EmpleadoController::class, 'misAccesos'])->name('empleado.mis-accesos');
-
-    // Gestión de Clientes por Empleado
-    Route::prefix('empleado/clientes')->name('empleado.clientes.')->group(function () {
-        Route::get('/', [EmpleadoController::class, 'clientes'])->name('index');
-        Route::get('/crear', [EmpleadoController::class, 'crearCliente'])->name('crear');
-        Route::post('/guardar', [EmpleadoController::class, 'guardarCliente'])->name('guardar');
-        Route::get('/{id}/editar', [EmpleadoController::class, 'editarCliente'])->name('editar');
-        Route::put('/{id}/actualizar', [EmpleadoController::class, 'actualizarCliente'])->name('actualizar');
-        Route::get('/{id}/historial', [EmpleadoController::class, 'historialCliente'])->name('historial');
-    });
-
-    // Gestión de Inventario por Empleado
-    Route::prefix('empleado/inventario')->name('empleado.inventario.')->group(function () {
-        Route::get('/', [EmpleadoController::class, 'inventario'])->name('index');
-        Route::get('/{id}/detalles', [EmpleadoController::class, 'detallesPelicula'])->name('detalles');
-    });
-
-
-    // Gestión de rentas
-    Route::prefix('rent')->name('rent.')->group(function () {
-        Route::get('/', [RentController::class, 'index'])->name('index');
-        Route::get('/active', [RentController::class, 'active'])->name('active');
-        Route::post('/', [RentController::class, 'store'])->name('store');
-        Route::put('/return/{rental}', [RentController::class, 'returnFilm'])->name('return');
-    });
-
-        Route::prefix('rental')->name('rental.')->group(function () {
-        Route::post('/store', [RentalController_avanzado::class, 'store'])->name('store');
-        Route::put('/return/{rental}', [RentalController_avanzado::class, 'returnFilm'])->name('return');
-    });
-
-    Route::get('/films_filter', [FilmController_filter::class, 'index'])->name('films_filter.index');
+    // Dashboard del usuario
+    Route::get('/dashboard', [UsuarioController::class, 'dashboard'])->name('dashboard');
     
-    // Gestión de clientes (empleado puede ver/crear clientes)
-    Route::resource('customers', CustomerController::class);
-    Route::resource('customers_otro', OtroCustomerController::class)->parameters([
-    'customers_otro' => 'customer'
-]);
+    // Perfil del usuario
+    Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
+    Route::put('/perfil/update', [UsuarioController::class, 'updatePerfil'])->name('perfil.update');
+    Route::post('/perfil/change-password', [UsuarioController::class, 'changePassword'])->name('perfil.change-password');
+    
+    // Puntos y transacciones
+    Route::get('/puntos', [UsuarioController::class, 'puntos'])->name('puntos');
+    Route::get('/historial', [UsuarioController::class, 'historial'])->name('historial');
+    
+    // Recompensas
+    Route::get('/recompensas', [RecompensasController::class, 'catalogo'])->name('recompensas.catalogo');
+    Route::get('/recompensas/{reward_id}', [RecompensasController::class, 'detalle'])->name('recompensas.detalle');
+    Route::post('/recompensas/{reward_id}/canjear', [RecompensasController::class, 'canjear'])->name('recompensas.canjear');
+    
+    // Mis canjes
+    Route::get('/mis-canjes', [RecompensasController::class, 'misCanjes'])->name('mis-canjes');
+    Route::get('/mis-canjes/{redemption_id}', [RecompensasController::class, 'detalleCanjes'])->name('mis-canjes.detalle');
 });
 
-// ============================================
-// RUTAS PROTEGIDAS - SOLO ADMINISTRADOR
-// ============================================
-Route::middleware(['staff', 'admin'])->group(function () {
 
-    //Ctalogo de rentas para soo el admin 
-    Route::get('/empleado_admin', [ControllerEmpleado::class, 'index'])->name('empleado_admin');
+
+Route::middleware(['auth.admin'])->prefix('admin')->name('admin.')->group(function () {
     
-    // Estadísticas
-    Route::get('/stats', [EstadisticasController::class, 'index'])->name('stats');
+    // Dashboard del administrador
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
-    // Panel de administrador
-    Route::get('/administrador', [AdministradorController::class, 'index'])->name('administrador');
+    // Gestión de Usuarios
+    Route::resource('usuarios', UsuariosAdminController::class);
+    Route::post('usuarios/{user_id}/toggle-active', [UsuariosAdminController::class, 'toggleActive'])->name('usuarios.toggle-active');
+    Route::post('usuarios/{user_id}/add-points', [UsuariosAdminController::class, 'addPoints'])->name('usuarios.add-points');
     
-    // Gestión de actores
-    Route::resource('actors', ActorController::class);
+    // Gestión de Recompensas
+    Route::resource('recompensas', RecompensasAdminController::class);
+    Route::post('recompensas/{reward_id}/toggle-active', [RecompensasAdminController::class, 'toggleActive'])->name('recompensas.toggle-active');
     
-    // Gestión de categorías
-    Route::resource('categories', CategoryController::class);
+    // Gestión de Canjes
+    Route::get('canjes', [CanjesAdminController::class, 'index'])->name('canjes.index');
+    Route::get('canjes/{redemption_id}', [CanjesAdminController::class, 'show'])->name('canjes.show');
+    Route::post('canjes/{redemption_id}/aprobar', [CanjesAdminController::class, 'aprobar'])->name('canjes.aprobar');
+    Route::post('canjes/{redemption_id}/entregar', [CanjesAdminController::class, 'entregar'])->name('canjes.entregar');
+    Route::post('canjes/{redemption_id}/cancelar', [CanjesAdminController::class, 'cancelar'])->name('canjes.cancelar');
     
-    // Gestión de idiomas
-    Route::resource('languages', LanguageController::class);
+    // Gestión de Actividades
+    Route::resource('actividades', ActividadesAdminController::class);
+    Route::post('actividades/{activity_id}/toggle-active', [ActividadesAdminController::class, 'toggleActive'])->name('actividades.toggle-active');
     
-    // Gestión de películas
-    Route::get('films/import', [FilmController::class, 'importForm'])->name('films.import-form');
-    Route::post('films/import', [FilmController::class, 'importFromOmdb'])->name('films.import-omdb');
-    Route::post('films/search-omdb', [FilmController::class, 'searchOmdb'])->name('films.search-omdb');
-    Route::resource('films', FilmController::class);
+    // Reportes y Estadísticas
+    Route::get('reportes', [ReportesController::class, 'index'])->name('reportes.index');
+    Route::get('reportes/usuarios', [ReportesController::class, 'usuarios'])->name('reportes.usuarios');
+    Route::get('reportes/recompensas', [ReportesController::class, 'recompensas'])->name('reportes.recompensas');
+    Route::get('reportes/puntos', [ReportesController::class, 'puntos'])->name('reportes.puntos');
     
-    // ============================================
-    // REPORTES
-    // ============================================
-    Route::prefix('reportes')->name('reportes.')->group(function () {
-        Route::get('/', [ReportController::class, 'index'])->name('index');
-        Route::get('/rentas/sucursal', [ReportController::class, 'exportSalesByStoreCsv'])->name('rentas.sucursal.excel');
-        Route::get('/rentas/sucursal/pdf', [ReportController::class, 'exportSalesByStorePdf'])->name('rentas.sucursal.pdf');
-        Route::get('/rentas/categoria', [ReportController::class, 'exportSalesByCategoryCsv'])->name('rentas.categoria.excel');
-        Route::get('/rentas/categoria/pdf', [ReportController::class, 'exportSalesByCategoryPdf'])->name('rentas.categoria.pdf');
-        Route::get('/rentas/actor', [ReportController::class, 'exportSalesByActorCsv'])->name('rentas.actor.excel');
-        Route::get('/rentas/actor/pdf', [ReportController::class, 'exportSalesByActorPdf'])->name('rentas.actor.pdf');
-        Route::get('/ingresos/tienda', [ReportController::class, 'exportIncomeByStoreCsv'])->name('ingresos.tienda.excel');
-        Route::get('/ingresos/tienda/pdf', [ReportController::class, 'exportIncomeByStorePdf'])->name('ingresos.tienda.pdf');
-        Route::get('/peliculas/top', [ReportController::class, 'exportTopMoviesCsv'])->name('peliculas.top.excel');
-        Route::get('/peliculas/top/pdf', [ReportController::class, 'exportTopMoviesPdf'])->name('peliculas.top.pdf');
-        Route::get('/clientes/top', [ReportController::class, 'exportTopCustomersCsv'])->name('clientes.top.excel');
-        Route::get('/clientes/top/pdf', [ReportController::class, 'exportTopCustomersPdf'])->name('clientes.top.pdf');
-    });
-
-
-    Route::prefix('inventory')->name('inventory.')->group(function () {
-    Route::get('/', [InventoryController::class, 'index'])->name('index');
-    Route::get('/create', [InventoryController::class, 'create'])->name('create');
-    Route::post('/', [InventoryController::class, 'store'])->name('store');
-    Route::get('/{inventory}/edit', [InventoryController::class, 'edit'])->name('edit');
-    Route::put('/{inventory}', [InventoryController::class, 'update'])->name('update');
-    Route::delete('/{inventory}', [InventoryController::class, 'destroy'])->name('destroy');
-    Route::get('/film/{film}', [InventoryController::class, 'byFilm'])->name('by-film');
-    Route::get('/store/{store}', [InventoryController::class, 'byStore'])->name('by-store');
-    Route::post('/bulk-add', [InventoryController::class, 'bulkAdd'])->name('bulk-add');
-    Route::post('/transfer', [InventoryController::class, 'transfer'])->name('transfer');    
-    });
-
-
-        Route::prefix('stores')->name('stores.')->group(function () {
-        Route::get('/', [StoreController::class, 'index'])->name('index');
-        Route::get('/create', [StoreController::class, 'create'])->name('create');
-        Route::post('/', [StoreController::class, 'store'])->name('store');
-        Route::get('/{store}/edit', [StoreController::class, 'edit'])->name('edit');
-        Route::put('/{store}', [StoreController::class, 'update'])->name('update');
-        Route::delete('/{store}', [StoreController::class, 'destroy'])->name('destroy');
-        Route::get('/{store}', [StoreController::class, 'show'])->name('show');
-        Route::post('/{store}/assign-manager', [StoreController::class, 'assignManager'])->name('assign-manager');
-    });
-
-        Route::prefix('staff')->name('staff.')->group(function () {
-        Route::get('/', [StaffController::class, 'index'])->name('index');
-        Route::get('/create', [StaffController::class, 'create'])->name('create');
-        Route::post('/', [StaffController::class, 'store'])->name('store');
-        Route::get('/{staff}/edit', [StaffController::class, 'edit'])->name('edit');
-        Route::put('/{staff}', [StaffController::class, 'update'])->name('update');
-        Route::delete('/{staff}', [StaffController::class, 'destroy'])->name('destroy');
-        Route::get('/{staff}', [StaffController::class, 'show'])->name('show');
-        
-        // Acciones especiales
-        Route::post('/{staff}/toggle-active', [StaffController::class, 'toggleActive'])->name('toggle-active');
-        Route::post('/{staff}/reset-password', [StaffController::class, 'resetPassword'])->name('reset-password');
-        Route::post('/{staff}/lock', [StaffController::class, 'lockAccount'])->name('lock');
-        Route::post('/{staff}/unlock', [StaffController::class, 'unlockAccount'])->name('unlock');
-        Route::post('/{staff}/change-store', [StaffController::class, 'changeStore'])->name('change-store');
-        Route::get('/store/{store}', [StaffController::class, 'byStore'])->name('by-store');
-    });
-
-
-        Route::prefix('admin/customers')->name('admin.customers.')->group(function () {
-        Route::get('/', [AdminCustomerController::class, 'index'])->name('index');
-        Route::get('/{customer}', [AdminCustomerController::class, 'show'])->name('show');
-        Route::get('/{customer}/edit', [AdminCustomerController::class, 'edit'])->name('edit');
-        Route::put('/{customer}', [AdminCustomerController::class, 'update'])->name('update');
-        Route::delete('/{customer}', [AdminCustomerController::class, 'destroy'])->name('destroy');
-        
-        // Acciones especiales
-        Route::post('/{customer}/toggle-active', [AdminCustomerController::class, 'toggleActive'])->name('toggle-active');
-        Route::post('/{customer}/reset-password', [AdminCustomerController::class, 'resetPassword'])->name('reset-password');
-        Route::get('/store/{store}', [AdminCustomerController::class, 'byStore'])->name('by-store');
+    // Gestión de Administradores (solo super_admin)
+    Route::middleware(['role:super_admin'])->group(function () {
+        Route::resource('administradores', AdministradoresController::class);
+        Route::post('administradores/{admin_id}/toggle-active', [AdministradoresController::class, 'toggleActive'])->name('administradores.toggle-active');
     });
 });
 
-// ============================================
-// RUTAS PROTEGIDAS - CLIENTE
-// ============================================
-Route::middleware(['customer'])->group(function () {
-    
-    // Dashboard principal del cliente
-    Route::get('/cliente', [ClienteController::class, 'index'])->name('cliente');
-    
-    // Catálogo de películas
-    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
-    
-    // Historial de rentas del cliente
-    Route::get('/cliente/rentas', [ClienteController::class, 'rentals'])->name('cliente.rentals');
-    
-    // Pagos y cargos del cliente
-    Route::get('/cliente/pagos', [ClienteController::class, 'payments'])->name('cliente.payments');
-    
-    // Perfil del cliente
-    Route::get('/cliente/perfil', [ClienteController::class, 'profile'])->name('cliente.profile');
-    Route::put('/cliente/perfil', [ClienteController::class, 'updateProfile'])->name('cliente.profile.update');
-});
+Route::get('/usuario/canje/{redemption_id}/pdf', [UsuarioController::class, 'downloadRedemptionPDF'])
+    ->name('usuario.canje.pdf');
+
+    Route::get('/usuario/canje/{redemption_id}/email', [UsuarioController::class, 'sendRedemptionEmail'])
+    ->name('usuario.canje.email');

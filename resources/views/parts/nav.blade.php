@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sakila-APP</title>
+    <title>Sistema de Recompensas</title>
 </head>
 <body>
     
 <div class="row">
-                    <div class="col-sm">
+    <div class="col-sm">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark navegacion bg-body-tertiary" style="max-width: 100%;" id="navbar">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url('/') }}">
             <span class="letra_logo">
-                <span class="tsukitones_diseno_principal">D</span>ark<span class="tsukitones_diseno_principal">M</span>ovies
+                <span class="tsukitones_diseno_principal">gob.mx</span>ystem
             </span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
@@ -24,63 +24,40 @@
         
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                @if(!Session::has('staff_id') && !Session::has('customer_id'))
+                @if(!Session::has('admin_id') && !Session::has('user_id'))
                 <!-- Inicio - Siempre visible -->
-                <li class="nav-item navegacion_item">
+                <li style="padding:20%;" class="nav-item navegacion_item">
                     <a class="nav-link active" aria-current="page" href="{{ url('/') }}">
                         <span class="navegacion_item_color">Inicio</span>
                     </a>
                 </li>
                 @endif
                 
-                @if(Session::has('staff_id'))
-
+                @if(Session::has('admin_id'))
+                    <!-- Menú de Administrador -->
                     <li class="nav-item navegacion_item">
-                        <a class="nav-link" href="{{ url('/empleado/dashboard') }}">
+                        <a class="nav-link" href="{{ url('/admin/dashboard') }}">
                             <span class="navegacion_item_color">Panel</span>
                         </a>
                     </li>
 
-                    @if(!(Session::get('user_role') === 'admin'))
-                    <!-- Menú visible solo para empleados autenticados -->
-                    <li class="nav-item navegacion_item">
-                        <a class="nav-link" href="{{ url('/empleado_normal') }}">
-                            <span class="navegacion_item_color">Rentas</span>
-                        </a>
-                    </li>
-                    @endif
-
-                    @if(Session::get('user_role') === 'admin')
+                    @if(Session::get('user_role') === 'super_admin' || Session::get('user_role') === 'admin')
                         <!-- Opciones exclusivas de administrador -->
-
                         <li class="nav-item navegacion_item">
-                            <a class="nav-link" href="{{ url('/empleado_admin') }}">
-                                <span class="navegacion_item_color">Rentas</span>
-                            </a>
-                        </li>
-
-
-                        <li class="nav-item navegacion_item">
-                            <a class="nav-link" href="{{ url('/stats') }}">
-                                <span class="navegacion_item_color">Stats</span>
+                            <a class="nav-link" href="{{ url('/admin/usuarios') }}">
+                                <span class="navegacion_item_color">Usuarios</span>
                             </a>
                         </li>
 
                         <li class="nav-item navegacion_item">
-                            <a class="nav-link" href="{{ url('/reportes') }}">
+                            <a class="nav-link" href="{{ url('/admin/canjes') }}">
+                                <span class="navegacion_item_color">Canjes</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item navegacion_item">
+                            <a class="nav-link" href="{{ url('/admin/reportes') }}">
                                 <span class="navegacion_item_color">Reportes</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item navegacion_item">
-                            <a class="nav-link" href="{{ url('/inventory') }}">
-                                <span class="navegacion_item_color">Inventario</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item navegacion_item">
-                            <a class="nav-link" href="{{ url('/films/import') }}">
-                                <span class="navegacion_item_color">OMDB</span>
                             </a>
                         </li>
 
@@ -90,32 +67,38 @@
                                 <span class="navegacion_item_color">Catálogos</span>
                             </a>
                             <ul class="dropdown-menu variante">
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/films') }}">
-                                    <span class="navegacion_item_color">Películas</span>
+                                <li><a class="dropdown-item variante_opciones" href="{{ url('/admin/recompensas') }}">
+                                    <span class="navegacion_item_color">Recompensas</span>
                                 </a></li>
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/actors') }}">Actores</a></li>
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/categories') }}">Categorías</a></li>
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/languages') }}">Idiomas</a></li>
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/customers_otro') }}">Clientes/Usuarios</a></li>
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/stores') }}">Tiendas</a></li>
-                                <li><a class="dropdown-item variante_opciones" href="{{ url('/staff') }}">Empleados</a></li>
+                                <li><a class="dropdown-item variante_opciones" href="{{ url('/admin/actividades') }}">Actividades</a></li>
+                                @if(Session::get('user_role') === 'super_admin')
+                                    <li><a class="dropdown-item variante_opciones" href="{{ url('/admin/administradores') }}">Administradores</a></li>
+                                @endif
                             </ul>
                         </li>
                     @endif
                 
-                @elseif(Session::has('customer_id'))
-                    <!-- Menú visible solo para clientes autenticados -->
+                @elseif(Session::has('user_id'))
+
+                    <!-- Menú visible solo para usuarios autenticados -->
                     <li class="nav-item navegacion_item">
-                        <a class="nav-link" href="{{ route('cliente', ['customer_id' => Session::get('customer_id')]) }}">
-                            <span class="navegacion_item_color">Cuenta</span>
+                        <a class="nav-link" href="{{ url('/usuario/dashboard') }}">
+                            <span class="navegacion_item_color">Panel</span>
                         </a>
                     </li>
 
                     <li class="nav-item navegacion_item">
-                        <a class="nav-link" href="{{ route('catalog') }}">
-                            <span class="navegacion_item_color">Catálogo</span>
+                        <a class="nav-link" href="{{ url('/usuario/recompensas') }}">
+                            <span class="navegacion_item_color">Recompensas</span>
                         </a>
                     </li>
+
+                    <li class="nav-item navegacion_item">
+                        <a class="nav-link" href="{{ url('/usuario/mis-canjes') }}">
+                            <span class="navegacion_item_color">Canjes</span>
+                        </a>
+                    </li>
+
                 
                 @else
                     <!-- Usuario NO autenticado - Sin opciones, solo Inicio -->
@@ -123,28 +106,25 @@
             </ul>
 
             <div class="nav-contenedor-botones">
-                <a href="#" class="nav-boton-formato">
-                    <div style="background-color: #181820;"><i class="fas fa-sun" style="color:white;"></i></div>
-                </a>
                 
-                @if(Session::has('staff_id'))
-                    <!-- Usuario autenticado - EMPLEADO -->
+                @if(Session::has('admin_id'))
+                    <!-- Usuario autenticado - ADMINISTRADOR -->
                     <div class="dropdown">
-                        <a href="#" class="nav-boton-formato dropdown-toggle" id="userDropdownStaff" 
+                        <a href="#" class="nav-boton-formato dropdown-toggle" id="userDropdownAdmin" 
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <div><i class="fa-solid fa-user-tie" style="color:white;"></i></div>
+                            <div><i class="fa-solid fa-user-shield" style="color:white;"></i></div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end variante" aria-labelledby="userDropdownStaff">
+                        <ul class="dropdown-menu dropdown-menu-end variante" aria-labelledby="userDropdownAdmin">
                             <li class="px-3 py-2">
-                                <small style="color:white !important;" class="text-muted">{{ Session::get('staff_name') }}</small><br>
-                                <small style="color:white !important;" class="text-muted">{{ Session::get('staff_email') }}</small><br>
+                                <small style="color:white !important;" class="text-muted">{{ Session::get('admin_name') }}</small><br>
+                                <small style="color:white !important;" class="text-muted">{{ Session::get('admin_email') }}</small><br>
                                 <small  style="color:white !important;" class="text-muted">
-                                    <strong>Rol:</strong> {{ ucfirst(Session::get('user_role', 'employee')) }}
+                                    <strong>Rol:</strong> {{ ucfirst(Session::get('user_role', 'admin')) }}
                                 </small>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="{{ route('auth.logout') }}" method="POST" id="logoutFormStaff">
+                                <form action="{{ route('auth.admin.logout') }}" method="POST" id="logoutFormAdmin">
                                     @csrf
                                     <button type="submit" class="dropdown-item variante_opciones">
                                         <i class="fa-solid fa-sign-out-alt me-2"></i>Cerrar Sesión
@@ -153,27 +133,37 @@
                             </li>
                         </ul>
                     </div>
-                @elseif(Session::has('customer_id'))
-                    <!-- Usuario autenticado - CLIENTE -->
+                @elseif(Session::has('user_id'))
+                    <!-- Usuario autenticado - CONDUCTOR -->
                     <div class="dropdown">
-                        <a href="#" class="nav-boton-formato dropdown-toggle" id="userDropdownCustomer" 
+                        <a href="#" class="nav-boton-formato dropdown-toggle" id="userDropdownUser" 
                            data-bs-toggle="dropdown" aria-expanded="false">
                             <div><i class="fa-solid fa-user-check" style="color:white;"></i></div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end variante" aria-labelledby="userDropdownCustomer">
+                        <style>
+                         #userDropdownUser::after {
+                            display: none !important;
+                             }
+                        </style>
+                        <ul class="dropdown-menu dropdown-menu-end variante" aria-labelledby="userDropdownUser" style="background-color: rgba(97, 18, 50) !important;">
                             <li class="px-3 py-2">
-                                <small style="color:white !important;" class="text-muted">{{ Session::get('customer_name') }}</small><br>
-                                <small style="color:white !important;" class="text-muted">{{ Session::get('customer_email') }}</small><br>
-                                <small style="color:white !important;" class="text-muted"><strong>Rol:</strong> Cliente</small>
+                                <small style="color:white !important;" class="text-muted">{{ Session::get('user_name') }}</small><br>
+                                <small style="color:white !important;" class="text-muted">{{ Session::get('user_email') }}</small><br>
+                                <small style="color:white !important;" class="text-muted">
+                                    <strong>Placa:</strong> {{ Session::get('user_plate') }}
+                                </small><br>
+                                <small style="color:white !important;" class="text-muted">
+                                    <strong>Puntos:</strong> {{ Session::get('user_points', 0) }}
+                                </small>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a href="{{ route('cliente', ['customer_id' => Session::get('customer_id')]) }}" class="dropdown-item variante_opciones">
+                                <a href="{{ url('/usuario/dashboard') }}" class="dropdown-item variante_opciones">
                                     <i class="fa-solid fa-user-cog me-2"></i>Mi Perfil
                                 </a>
                             </li>
                             <li>
-                                <form action="{{ route('auth.cliente.logout') }}" method="POST" id="logoutFormCustomer">
+                                <form action="{{ route('auth.usuario.logout') }}" method="POST" id="logoutFormUser">
                                     @csrf
                                     <button type="submit" class="dropdown-item variante_opciones">
                                         <i class="fa-solid fa-sign-out-alt me-2"></i>Cerrar Sesión
@@ -196,12 +186,12 @@
                 <div class="input-buscar-container">
                     <i class="fas fa-search"></i>
                     <input maxlength="40" 
-                           style="background-color: rgba(33,36,51,255); border-radius: 5rem !important; border-color:#9295af; border-width: 0.1rem; color:#7f829f;" 
+                           style="background-color: rgba(104, 32, 61, 1); border-radius: 5rem !important; border-color:#9295af; border-width: 0.1rem; color:#7f829f;" 
                            class="form-control me-2 input-grueso" 
                            type="search" 
-                           placeholder="Buscar película.." 
+                           placeholder="Buscar recompensa.." 
                            aria-label="Search" 
-                           name="pelicula_buscar" />
+                           name="recompensa_buscar" />
                     <div class="boton-filtro">
                         <a href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15px" fill="none" viewBox="0 0 24 24" 
@@ -219,7 +209,7 @@
 </nav>
 
 <!-- Modal de Login - Solo se muestra si NO hay sesión -->
-@if(!Session::has('staff_id') && !Session::has('customer_id'))
+@if(!Session::has('admin_id') && !Session::has('user_id'))
 <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content cuadro-login">
@@ -229,27 +219,22 @@
             </div>
             <div class="modal-body p-4">
                 
-                <!-- Tabs para Empleado / Cliente -->
+                <!-- Tabs para Usuario / Administrador -->
                 <ul class="nav nav-tabs mb-3" id="loginTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="cliente-tab" data-bs-toggle="tab" 
-                                data-bs-target="#cliente-login" type="button" role="tab">
-                            Cliente
+                        <button class="nav-link active" id="usuario-tab" data-bs-toggle="tab" 
+                                data-bs-target="#usuario-login" type="button" role="tab">
+                            Usuario
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="empleado-tab" data-bs-toggle="tab" 
-                                data-bs-target="#empleado-login" type="button" role="tab">
-                            Empleado
-                        </button>
-                    </li>
+
                 </ul>
 
                 <div class="tab-content" id="loginTabContent">
                     
-                    <!-- Login Cliente -->
-                    <div class="tab-pane fade show active" id="cliente-login" role="tabpanel">
-                        <form action="{{ route('auth.cliente.login') }}" method="POST" id="loginFormCliente">
+                    <!-- Login Usuario -->
+                    <div class="tab-pane fade show active" id="usuario-login" role="tabpanel">
+                        <form action="{{ route('auth.usuario.login') }}" method="POST" id="loginFormUsuario">
                             @csrf
                             @if($errors->any())
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -259,103 +244,85 @@
                             @endif
                             
                             <div class="mb-3">
-                                <label class="form-label label-modal">Correo electrónico</label>
-                                <input type="email" name="email" class="form-control input-modal" 
-                                       placeholder="correo@gmail.com" value="{{ old('email') }}" required>
+                                <label class="form-label label-modal">Placa del Vehículo</label>
+                                <input type="text" name="plate_number" class="form-control input-modal" 
+                                       placeholder="ABC-1234" value="{{ old('plate_number') }}" maxlength="7" required>
+                                <small class="text-muted">Ingresa tu placa tal como la registraste</small>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label label-modal">ID de Dirección (Contraseña)</label>
-                                <input type="number" name="password" class="form-control input-modal" 
-                                       placeholder="Ingresa tu ID de dirección" required>
-                                <small class="text-muted">Tu ID de dirección es tu contraseña temporal</small>
+                                <label class="form-label label-modal">Contraseña</label>
+                                <input type="password" name="password" class="form-control input-modal" 
+                                       placeholder="••••••••" maxlength="8" required>
                             </div>
                             
                             <button type="submit" class="btn btn-login-modal w-100 mb-3">
-                                Iniciar sesión como Cliente
+                                Iniciar sesión como Usuario
                             </button>
 
-                            <div class="text-center mb-3">
-                                <a href="{{ route('password.request') }}" class="link-register">
-                                    ¿Olvidaste tu contraseña?
-                                </a>
-                            </div>
 
-                            <div class="text-center register-link">
-                                ¿No tienes cuenta? 
-                                <a href="#" id="showRegisterCliente" class="link-register">Regístrate aquí</a>
-                            </div>
                         </form>
 
-                        <!-- Formulario de Registro Cliente (oculto inicialmente) -->
-                        <div id="registerFormCliente" style="display: none;">
-                            <button class="btn btn-link mb-3 p-0" id="backToLoginCliente">
+                        <!-- Formulario de Registro Usuario (oculto inicialmente) -->
+                        <div id="registerFormUsuario" style="display: none;">
+                            <button class="btn btn-link mb-3 p-0" id="backToLoginUsuario">
                                 <i class="fa-solid fa-arrow-left me-2"></i>Volver al login
                             </button>
                             
-                            <form action="{{ route('auth.cliente.register') }}" method="POST">
+                            <form action="{{ route('auth.usuario.register') }}" method="POST">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label label-modal">Nombre</label>
                                         <input type="text" name="first_name" class="form-control input-modal" 
-                                               placeholder="Juan" maxlength="45" required>
+                                               placeholder="Juan" maxlength="50" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label label-modal">Apellido</label>
                                         <input type="text" name="last_name" class="form-control input-modal" 
-                                               placeholder="Pérez" maxlength="45" required>
+                                               placeholder="Pérez" maxlength="50" required>
                                     </div>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label class="form-label label-modal">Correo electrónico</label>
                                     <input type="email" name="email" class="form-control input-modal" 
-                                           placeholder="correo@gmail.com" maxlength="50" required>
+                                           placeholder="correo@ejemplo.com" maxlength="100" required>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label label-modal">Dirección</label>
-                                    <input type="text" name="address" class="form-control input-modal" 
-                                           placeholder="Calle Principal #123" maxlength="50" required>
+                                    <label class="form-label label-modal">Placa del Vehículo</label>
+                                    <input type="text" name="plate_number" class="form-control input-modal" 
+                                           placeholder="ABC-1234" maxlength="20" required>
+                                    <small class="text-muted">Esta será tu usuario para iniciar sesión</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label label-modal">Teléfono</label>
+                                    <input type="tel" name="phone" class="form-control input-modal" 
+                                           placeholder="555-1234-5678" maxlength="20">
                                 </div>
                                 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label label-modal">Distrito</label>
-                                        <input type="text" name="district" class="form-control input-modal" 
-                                               placeholder="Centro" maxlength="20" required>
+                                        <label class="form-label label-modal">Marca del Vehículo</label>
+                                        <input type="text" name="vehicle_brand" class="form-control input-modal" 
+                                               placeholder="Toyota" maxlength="50" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label label-modal">Código Postal</label>
-                                        <input type="text" name="postal_code" class="form-control input-modal" 
-                                               placeholder="12345" maxlength="10">
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label label-modal">Ciudad</label>
-                                        <select name="city_id" class="form-control input-modal" required>
-                                            <option value="">Selecciona ciudad</option>
-                                            <option value="1">Lethbridge</option>
-                                            <option value="2">Woodridge</option>
-                                            <option value="312">México</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label label-modal">Teléfono</label>
-                                        <input type="tel" name="phone" class="form-control input-modal" 
-                                               placeholder="123-456-7890" maxlength="20" required>
+                                        <label class="form-label label-modal">Modelo</label>
+                                        <input type="text" name="vehicle_model" class="form-control input-modal" 
+                                               placeholder="Corolla" maxlength="50" required>
                                     </div>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label label-modal">Sucursal</label>
-                                    <select name="store_id" class="form-control input-modal" required>
-                                        <option value="">Selecciona sucursal</option>
-                                        <option value="1">Sucursal 1</option>
-                                        <option value="2">Sucursal 2</option>
-                                    </select>
+                                    <label class="form-label label-modal">Año del Vehículo</label>
+                                    <input type="number" name="vehicle_year" class="form-control input-modal" 
+                                           placeholder="2020" min="1900" max="{{ date('Y') + 1 }}" required>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <small>Tu contraseña será enviada a tu correo electrónico después del registro.</small>
                                 </div>
                                 
                                 <button type="submit" class="btn btn-login-modal w-100">
@@ -365,9 +332,9 @@
                         </div>
                     </div>
 
-                    <!-- Login Empleado -->
-                    <div class="tab-pane fade" id="empleado-login" role="tabpanel">
-                        <form action="{{ route('auth.login') }}" method="POST" id="loginFormEmpleado">
+                    <!-- Login Administrador -->
+                    <div class="tab-pane fade" id="admin-login" role="tabpanel">
+                        <form action="{{ route('auth.admin.login') }}" method="POST" id="loginFormAdmin">
                             @csrf
                             @if($errors->any())
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -379,7 +346,7 @@
                             <div class="mb-3">
                                 <label class="form-label label-modal">Correo electrónico</label>
                                 <input type="email" name="email" class="form-control input-modal" 
-                                       placeholder="empleado@sakila.com" value="{{ old('email') }}" required>
+                                       placeholder="admin@rewards.com" value="{{ old('email') }}" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label label-modal">Contraseña</label>
@@ -388,7 +355,7 @@
                             </div>
                             
                             <button type="submit" class="btn btn-login-modal w-100 mb-3">
-                                Iniciar sesión como Empleado
+                                Iniciar sesión como Administrador
                             </button>
 
                             <div class="text-center register-link">
@@ -404,27 +371,27 @@
 </div>
 
 <script>
-// Toggle entre login y registro de cliente
+// Toggle entre login y registro de usuario
 document.addEventListener('DOMContentLoaded', function() {
-    const showRegisterBtn = document.getElementById('showRegisterCliente');
-    const backToLoginBtn = document.getElementById('backToLoginCliente');
-    const loginFormCliente = document.getElementById('loginFormCliente');
-    const registerFormCliente = document.getElementById('registerFormCliente');
+    const showRegisterBtn = document.getElementById('showRegisterUsuario');
+    const backToLoginBtn = document.getElementById('backToLoginUsuario');
+    const loginFormUsuario = document.getElementById('loginFormUsuario');
+    const registerFormUsuario = document.getElementById('registerFormUsuario');
     
     if (showRegisterBtn) {
         showRegisterBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            loginFormCliente.style.display = 'none';
-            registerFormCliente.style.display = 'block';
-            document.getElementById('modalTitle').textContent = 'Registro de Cliente';
+            loginFormUsuario.style.display = 'none';
+            registerFormUsuario.style.display = 'block';
+            document.getElementById('modalTitle').textContent = 'Registro de Usuario';
         });
     }
     
     if (backToLoginBtn) {
         backToLoginBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            registerFormCliente.style.display = 'none';
-            loginFormCliente.style.display = 'block';
+            registerFormUsuario.style.display = 'none';
+            loginFormUsuario.style.display = 'block';
             document.getElementById('modalTitle').textContent = 'Acceso al Sistema';
         });
     }
@@ -440,7 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endif
 
-                    </div>
-                </div>
+    </div>
+</div>
 </body>
 </html>
