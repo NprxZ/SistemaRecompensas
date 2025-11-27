@@ -140,7 +140,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🎁 COMPROBANTE DE CANJE</h1>
+        <h1>COMPROBANTE DE CANJE</h1>
         <p>Sistema de Recompensas por Puntos</p>
     </div>
 
@@ -149,7 +149,7 @@
         <!-- Código de Canje -->
         <div class="code-section">
             <p style="color: #6B1C3D; font-weight: bold; margin-bottom: 10px;">CÓDIGO DE CANJE</p>
-            <h2>{{ $redemption->redemption_code }}</h2>
+            <h2>{{ $redemption->codigo_canje }}</h2>
             
             <!-- QR Code -->
             <div class="qr-section">
@@ -164,53 +164,53 @@
         <div class="info-grid">
             <div class="info-row">
                 <div class="info-label">ID de Canje:</div>
-                <div class="info-value">#{{ $redemption->redemption_id }}</div>
+                <div class="info-value">#{{ $redemption->canje_id }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Usuario:</div>
-                <div class="info-value">{{ $user->first_name }} {{ $user->last_name }}</div>
+                <div class="info-value">{{ $user->nombre }} {{ $user->apellido }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Placa:</div>
-                <div class="info-value">{{ $user->plate_number }}</div>
+                <div class="info-value">{{ $user->numero_placa }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Fecha de Solicitud:</div>
-                <div class="info-value">{{ \Carbon\Carbon::parse($redemption->created_at)->format('d/m/Y H:i') }}</div>
+                <div class="info-value">{{ \Carbon\Carbon::parse($redemption->fecha_creacion)->format('d/m/Y H:i') }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Estado:</div>
                 <div class="info-value">
-                    @if($redemption->status == 'approved')
-                        <span class="status-badge status-approved">✅ APROBADO</span>
-                    @elseif($redemption->status == 'pending')
-                        <span class="status-badge status-pending">⏳ PENDIENTE</span>
-                    @elseif($redemption->status == 'delivered')
-                        <span class="status-badge status-delivered">📦 ENTREGADO</span>
+                    @if($redemption->estado == 'aprobado')
+                        <span class="status-badge status-approved">APROBADO</span>
+                    @elseif($redemption->estado == 'pendiente')
+                        <span class="status-badge status-pending">PENDIENTE</span>
+                    @elseif($redemption->estado == 'entregado')
+                        <span class="status-badge status-delivered">ENTREGADO</span>
                     @endif
                 </div>
             </div>
             <div class="info-row">
                 <div class="info-label">Puntos Utilizados:</div>
                 <div class="info-value" style="color: #6B1C3D; font-weight: bold;">
-                    ⭐ {{ number_format($redemption->points_used) }} puntos
+                     {{ number_format($redemption->puntos_utilizados) }} puntos
                 </div>
             </div>
         </div>
 
         <!-- Información de la Recompensa -->
         <div class="reward-info">
-            <h3>📦 Recompensa</h3>
+            <h3>Recompensa</h3>
             <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">
-                {{ $redemption->title }}
+                {{ $redemption->titulo }}
             </p>
             <p style="color: #6c757d; font-size: 14px; line-height: 1.6;">
-                {{ $redemption->description }}
+                {{ $redemption->descripcion }}
             </p>
-            @if($redemption->category)
+            @if($redemption->categoria)
                 <p style="margin-top: 10px;">
                     <span style="background: #6B1C3D; color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px;">
-                        {{ strtoupper($redemption->category) }}
+                        {{ strtoupper($redemption->categoria) }}
                     </span>
                 </p>
             @endif
@@ -218,7 +218,7 @@
 
         <!-- Instrucciones -->
         <div class="instructions">
-            <h4>📋 Instrucciones para Canjear</h4>
+            <h4>Instrucciones para Canjear</h4>
             <p>
                 1. Presenta este comprobante impreso o en formato digital<br>
                 2. Muestra el código de canje o el código QR<br>
@@ -227,13 +227,13 @@
             </p>
         </div>
 
-        @if($redemption->terms_conditions)
+        @if($redemption->terminos_condiciones)
         <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px;">
             <h4 style="color: #6B1C3D; font-size: 14px; margin-bottom: 8px;">
                 Términos y Condiciones:
             </h4>
             <p style="font-size: 11px; color: #6c757d; line-height: 1.5;">
-                {{ $redemption->terms_conditions }}
+                {{ $redemption->termino_condiciones }}
             </p>
         </div>
         @endif

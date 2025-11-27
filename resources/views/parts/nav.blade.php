@@ -93,11 +93,13 @@
                         </a>
                     </li>
 
+                    <!--
                     <li class="nav-item navegacion_item">
                         <a class="nav-link" href="{{ url('/usuario/mis-canjes') }}">
                             <span class="navegacion_item_color">Canjes</span>
                         </a>
                     </li>
+                    -->
 
                 
                 @else

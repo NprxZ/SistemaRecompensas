@@ -13,32 +13,32 @@ class AdminController extends Controller
     {
 
         $stats = [
-            'total_users' => DB::table('users')->where('active', 1)->count(),
-            'total_rewards' => DB::table('rewards')->where('active', 1)->count(),
-            'pending_redemptions' => DB::table('reward_redemptions')->where('status', 'pending')->count(),
-            'total_points_distributed' => DB::table('point_transactions')
-                ->where('type', 'earned')
-                ->sum('points')
+            'total_users' => DB::table('usuarios')->where('activo', 1)->count(),
+            'total_rewards' => DB::table('recompensas')->where('activo', 1)->count(),
+            'pending_redemptions' => DB::table('canjes_recompensas')->where('estado', 'pendiente')->count(),
+            'total_points_distributed' => DB::table('transacciones_puntos')
+                ->where('tipo', 'ganado')
+                ->sum('puntos')
         ];
         
 
-        $recentUsers = DB::table('users')
-            ->orderBy('created_at', 'desc')
+        $recentUsers = DB::table('usuarios')
+            ->orderBy('fecha_creacion', 'desc')
             ->limit(5)
             ->get();
         
-        $recentRedemptions = DB::table('reward_redemptions')
-            ->join('users', 'reward_redemptions.user_id', '=', 'users.user_id')
-            ->join('rewards', 'reward_redemptions.reward_id', '=', 'rewards.reward_id')
-            ->select('reward_redemptions.*', 'users.first_name', 'users.last_name', 'rewards.title')
-            ->orderBy('reward_redemptions.created_at', 'desc')
+        $recentRedemptions = DB::table('canjes_recompensas')
+            ->join('usuarios', 'canjes_recompensas.usuario_id', '=', 'usuarios.usuario_id')
+            ->join('recompensas', 'canjes_recompensas.recompensa_id', '=', 'recompensas.recompensa_id')
+            ->select('canjes_recompensas.*', 'usuarios.nombre', 'usuarios.apellido', 'recompensas.titulo')
+            ->orderBy('canjes_recompensas.fecha_creacion', 'desc')
             ->limit(10)
             ->get();
         
-        $topRewards = DB::table('reward_redemptions')
-            ->join('rewards', 'reward_redemptions.reward_id', '=', 'rewards.reward_id')
-            ->select('rewards.title', DB::raw('COUNT(*) as total_redemptions'))
-            ->groupBy('rewards.reward_id', 'rewards.title')
+        $topRewards = DB::table('canjes_recompensas')
+            ->join('recompensas', 'canjes_recompensas.recompensa_id', '=', 'recompensas.recompensa_id')
+            ->select('recompensas.titulo', DB::raw('COUNT(*) as total_redemptions'))
+            ->groupBy('recompensas.recompensa_id', 'recompensas.titulo')
             ->orderBy('total_redemptions', 'desc')
             ->limit(5)
             ->get();

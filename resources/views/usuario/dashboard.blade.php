@@ -9,12 +9,12 @@
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col">
-                    <h1 style="font-weight:bold !important;" class="h3 mb-3 text-dark">Bienvenido, {{ $user->first_name }} {{ $user->last_name }}</h1>
+                    <h1 style="font-weight:bold !important;" class="h3 mb-3 text-dark">Bienvenido, {{ $user->nombre }} {{ $user->apellido }}</h1>
                     <p class="text-muted mb-2">
-                        <span style="font-weight:bold !important;" class="fw-semibold">Vehículo:</span> {{ $user->vehicle_brand }} {{ $user->vehicle_model }} ({{ $user->vehicle_year }})
+                        <span style="font-weight:bold !important;" class="fw-semibold">Vehículo:</span> {{ $user->marca_vehiculo }} {{ $user->modelo_vehiculo }} ({{ $user->anio_vehiculo }})
                     </p>
                     <p class="text-muted small mb-0">
-                        <span style="font-weight:bold !important;" class="fw-semibold">Placa:</span> {{ $user->plate_number }}
+                        <span style="font-weight:bold !important;" class="fw-semibold">Placa:</span> {{ $user->numero_placa }}
                     </p>
                 </div>
                 <div class="col-auto">
@@ -35,7 +35,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="card-text opacity-75 small fw-medium mb-2">Puntos Actuales</p>
-                            <h3 class="card-title mb-0 display-5 fw-bold">{{ number_format($user->points) }}</h3>
+                            <h3 class="card-title mb-0 display-5 fw-bold">{{ number_format($user->puntos) }}</h3>
                         </div>
                         <svg class="text-white opacity-50" width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
@@ -52,29 +52,12 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="card-text opacity-75 small fw-medium mb-2">Placa del Vehículo</p>
-                            <h3 class="card-title mb-0 display-6 fw-bold">{{ $user->plate_number }}</h3>
-                            <p class="small opacity-75 mb-0 mt-1">{{ $user->vehicle_brand }}</p>
+                            <h3 class="card-title mb-0 display-6 fw-bold">{{ $user->numero_placa }}</h3>
+                            <p class="small opacity-75 mb-0 mt-1">{{ $user->marca_vehiculo }}</p>
                         </div>
                         <svg class="text-white opacity-50" width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
                             <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-6a1 1 0 00-1-1H3zm7 0a1 1 0 011-1h2.05a2.5 2.5 0 014.9 0H19a1 1 0 011 1v10a1 1 0 01-1 1h-1.05a2.5 2.5 0 01-4.9 0H11a1 1 0 01-1-1V4z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recompensas Canjeadas -->
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card bg-warning text-white shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="card-text opacity-75 small fw-medium mb-2">Canjes Realizados</p>
-                            <h3 class="card-title mb-0 display-5 fw-bold">{{ count($recentRedemptions) }}</h3>
-                        </div>
-                        <svg class="text-white opacity-50" width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                         </svg>
                     </div>
                 </div>
@@ -123,9 +106,9 @@
                 <div class="seccion_artista">
                     <div class="contenedor_albumes edit_artistas" style="border-radius:0.4rem;">
                         <div class="animacion_carta" style="border-radius:0.4rem;">
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#rewardModal{{ $reward->reward_id }}">
-                                @if($reward->image)
-                                    <img width="100%" src="{{ asset('images/' . $reward->image) }}" alt="{{ $reward->title }}" style="border-radius:0.4rem 0.4rem 0 0;">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#rewardModal{{ $reward->recompensa_id }}">
+                                @if($reward->imagen)
+                                    <img width="100%" src="{{ asset('images/' . $reward->imagen) }}" alt="{{ $reward->titulo }}" style="border-radius:0.4rem 0.4rem 0 0;">
                                 @else
                                     <div class="reward-placeholder" style="width: 100%; height: 250px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; border-radius:0.4rem 0.4rem 0 0;">
                                         <svg width="80" height="80" fill="white" viewBox="0 0 20 20">
@@ -143,14 +126,14 @@
 
                                 <!-- Badge de categoría -->
                                 <div class="marca_album marca_artista">
-                                    <span class="badge bg-dark">{{ ucfirst($reward->category) }}</span>
+                                    <span class="badge bg-dark">{{ ucfirst($reward->categoria) }}</span>
                                 </div>
                                 
                                 <!-- Badge de disponibilidad -->
                                 <div class="marca_formato formato_artista">
-                                    @if($reward->stock > 5)
+                                    @if($reward->inventario > 5)
                                         <span class="badge bg-success">Disponible</span>
-                                    @elseif($reward->stock > 0)
+                                    @elseif($reward->inventario > 0)
                                         <span class="badge bg-warning text-dark">Últimas unidades</span>
                                     @else
                                         <span class="badge bg-danger">Agotado</span>
@@ -161,7 +144,7 @@
                     </div>
                     
                     <div style="margin:10px;">
-                        <span style="font-weight: bold;">{{ $reward->title }}</span>
+                        <span style="font-weight: bold;">{{ $reward->titulo }}</span>
                     </div>
                     
                     <div style="margin:10px; font-size: 0.9rem; color: #666;">
@@ -169,28 +152,28 @@
                             <svg width="16" height="16" fill="currentColor" class="text-warning" viewBox="0 0 20 20" style="display: inline;">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
-                            {{ number_format($reward->points_required) }} puntos
+                            {{ number_format($reward->puntos_requeridos) }} puntos
                         </div>
-                        <div><i class="fas fa-boxes"></i> Stock: {{ $reward->stock }} unidades</div>
+                        <div><i class="fas fa-boxes"></i> Stock: {{ $reward->inventario }} unidades</div>
                     </div>
 
                     <div style="text-align:center; margin: 10px;">
                         <button class="btn btn-sm btn-primary w-100" 
                                 data-bs-toggle="modal" 
-                                data-bs-target="#rewardModal{{ $reward->reward_id }}">
+                                data-bs-target="#rewardModal{{ $reward->recompensa_id }}">
                             <i class="fas fa-info-circle"></i> Ver Detalles
                         </button>
                     </div>
                 </div>
 
                 <!-- MODAL CON DETALLES COMPLETOS -->
-                <div class="modal fade" id="rewardModal{{ $reward->reward_id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="rewardModal{{ $reward->recompensa_id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-scrollable">
                         <div class="modal-content">
                             <div class="modal-header bg-primary text-white">
                                 <h5 class="modal-title">
-                                    <i class="fas fa-gift"></i> {{ $reward->title }}
-                                    <span class="badge bg-light text-dark ms-2">{{ ucfirst($reward->category) }}</span>
+                                    <i class="fas fa-gift"></i> {{ $reward->titulo }}
+                                    <span class="badge bg-light text-dark ms-2">{{ ucfirst($reward->categoria) }}</span>
                                 </h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
@@ -198,9 +181,9 @@
                             <div class="modal-body">
                                 <!-- Imagen destacada -->
                                 <div class="text-center mb-4">
-                                    @if($reward->image)
-                                        <img src="{{ asset('images/' . $reward->image) }}" 
-                                             alt="{{ $reward->title }}" 
+                                    @if($reward->imagen)
+                                        <img src="{{ asset('images/' . $reward->imagen) }}" 
+                                             alt="{{ $reward->titulo }}" 
                                              class="img-fluid rounded shadow"
                                              style="max-height: 350px;">
                                     @else
@@ -217,7 +200,7 @@
                                     <h6 class="border-bottom pb-2">
                                         <i class="fas fa-align-left"></i> Descripción
                                     </h6>
-                                    <p class="text-muted">{{ $reward->description }}</p>
+                                    <p class="text-muted">{{ $reward->descripcion }}</p>
                                 </div>
 
                                 <!-- Información detallada -->
@@ -233,15 +216,15 @@
                                                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="display: inline;">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                     </svg>
-                                                    {{ number_format($reward->points_required) }}
+                                                    {{ number_format($reward->puntos_requeridos) }}
                                                 </span>
                                             </li>
-                                            <li class="mb-2"><strong>Categoría:</strong> {{ ucfirst($reward->category) }}</li>
-                                            <li class="mb-2"><strong>Stock disponible:</strong> {{ $reward->stock }} unidades</li>
-                                            @if($reward->expiration_date)
+                                            <li class="mb-2"><strong>Categoría:</strong> {{ ucfirst($reward->categoria) }}</li>
+                                            <li class="mb-2"><strong>Stock disponible:</strong> {{ $reward->inventario }} unidades</li>
+                                            @if($reward->fecha_expiracion)
                                                 <li class="mb-2">
                                                     <strong>Válido hasta:</strong> 
-                                                    {{ \Carbon\Carbon::parse($reward->expiration_date)->format('d/m/Y') }}
+                                                    {{ \Carbon\Carbon::parse($reward->fecha_expiracion)->format('d/m/Y') }}
                                                 </li>
                                             @endif
                                         </ul>
@@ -254,21 +237,21 @@
                                         <ul class="list-unstyled">
                                             <li class="mb-2">
                                                 <strong>Tus puntos actuales:</strong> 
-                                                <span class="badge bg-primary fs-6">{{ number_format($user->points) }}</span>
+                                                <span class="badge bg-primary fs-6">{{ number_format($user->puntos) }}</span>
                                             </li>
                                             <li class="mb-2">
                                                 <strong>Estado:</strong>
-                                                @if($user->points >= $reward->points_required)
+                                                @if($user->puntos >= $reward->puntos_requeridos)
                                                     <span class="badge bg-success">Puedes canjearlo</span>
                                                 @else
                                                     <span class="badge bg-danger">Puntos insuficientes</span>
                                                 @endif
                                             </li>
-                                            @if($user->points < $reward->points_required)
+                                            @if($user->puntos < $reward->puntos_requeridos)
                                                 <li class="mb-2">
                                                     <strong>Te faltan:</strong> 
                                                     <span class="text-danger fw-bold">
-                                                        {{ number_format($reward->points_required - $user->points) }} puntos
+                                                        {{ number_format($reward->puntos_requeridos - $user->puntos) }} puntos
                                                     </span>
                                                 </li>
                                             @endif
@@ -277,24 +260,24 @@
                                 </div>
 
                                 <!-- Términos y condiciones -->
-                                @if($reward->terms_conditions)
+                                @if($reward->terminos_condiciones)
                                 <div class="mb-3">
                                     <h6 class="border-bottom pb-2">
                                         <i class="fas fa-file-contract"></i> Términos y Condiciones
                                     </h6>
                                     <div class="alert alert-light">
-                                        <small class="text-muted">{{ $reward->terms_conditions }}</small>
+                                        <small class="text-muted">{{ $reward->terminos_condiciones }}</small>
                                     </div>
                                 </div>
                                 @endif
 
                                 <!-- Alerta de disponibilidad -->
-                                @if($reward->stock <= 5 && $reward->stock > 0)
+                                @if($reward->inventario <= 5 && $reward->inventario > 0)
                                 <div class="alert alert-warning">
                                     <i class="fas fa-exclamation-triangle"></i>
-                                    <strong>¡Últimas unidades disponibles!</strong> Solo quedan {{ $reward->stock }} en stock.
+                                    <strong>¡Últimas unidades disponibles!</strong> Solo quedan {{ $reward->inventario }} en stock.
                                 </div>
-                                @elseif($reward->stock == 0)
+                                @elseif($reward->inventario == 0)
                                 <div class="alert alert-danger">
                                     <i class="fas fa-times-circle"></i>
                                     <strong>Agotado</strong> - Esta recompensa no está disponible actualmente.
@@ -306,11 +289,12 @@
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="fas fa-times"></i> Cerrar
                                 </button>
-                                @if($reward->stock > 0 && $reward->active)
-                                    @if($user->points >= $reward->points_required)
-                                        <form action="{{ route('usuario.recompensas.canjear', $reward->reward_id) }}" method="POST" style="display: inline;">
+                                @if($reward->inventario > 0 && $reward->activo)
+                                    @if($user->puntos >= $reward->puntos_requeridos)
+<!--<form action="{{ route('usuario.recompensas.canjear', $reward->recompensa_id) }}" method="POST" style="display: inline;">-->
+                                        <form action="{{ route('usuario.recompensas.canjear', $reward->recompensa_id) }}" method="POST" style="display: inline;">
                                             @csrf
-                                            <button type="submit" class="btn btn-primary" onclick="return confirm('¿Estás seguro de canjear esta recompensa por {{ number_format($reward->points_required) }} puntos?')">
+                                            <button type="submit" class="btn btn-primary" onclick="return confirm('¿Estás seguro de canjear esta recompensa por {{ number_format($reward->puntos_requeridos) }} puntos?')">
                                                 <i class="fas fa-shopping-cart"></i> Canjear Ahora
                                             </button>
                                         </form>

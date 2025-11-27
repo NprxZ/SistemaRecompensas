@@ -10,7 +10,7 @@
             <h1 class="h3 mb-2">
                 <i class="fas fa-file-invoice text-primary"></i> Detalle del Canje
             </h1>
-            <p class="text-muted">Información completa de tu canje #{{ $redemption->redemption_id }}</p>
+            <p class="text-muted">Información completa de tu canje #{{ $redemption->canje_id }}</p>
         </div>
         <div class="col-md-6 text-md-end">
             <a href="{{ route('usuario.mis-canjes') }}" class="btn btn-outline-secondary">
@@ -25,17 +25,17 @@
             <!-- Estado del Canje -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header 
-                    @if($redemption->status == 'pending') bg-warning
-                    @elseif($redemption->status == 'approved') bg-success
-                    @elseif($redemption->status == 'delivered') bg-info
+                    @if($redemption->estado == 'pendiente') bg-warning
+                    @elseif($redemption->estado == 'aprobado') bg-success
+                    @elseif($redemption->estado == 'entregado') bg-info
                     @else bg-danger
                     @endif text-white">
                     <h5 class="mb-0">
-                        @if($redemption->status == 'pending')
+                        @if($redemption->estado == 'pendiente')
                             ⏳ Estado: Pendiente de Aprobación
-                        @elseif($redemption->status == 'approved')
+                        @elseif($redemption->estado == 'aprobado')
                             ✅ Estado: Aprobado - Listo para Recoger
-                        @elseif($redemption->status == 'delivered')
+                        @elseif($redemption->estado == 'entregado')
                             📦 Estado: Entregado
                         @else
                             ❌ Estado: Cancelado
@@ -43,36 +43,36 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    @if($redemption->status == 'pending')
+                    @if($redemption->estado == 'pendiente')
                         <div class="alert alert-warning">
                             <i class="fas fa-clock"></i>
                             <strong>Tu canje está en revisión.</strong> 
                             Nuestro equipo está procesando tu solicitud. Te notificaremos cuando esté listo.
                         </div>
-                    @elseif($redemption->status == 'approved')
+                    @elseif($redemption->estado == 'aprobado')
                         <div class="alert alert-success">
                             <i class="fas fa-check-circle"></i>
                             <strong>¡Tu canje ha sido aprobado!</strong> 
                             Ya puedes recoger tu recompensa presentando el código de canje.
-                            @if($redemption->approved_at)
-                                <br><small>Aprobado el: {{ \Carbon\Carbon::parse($redemption->approved_at)->format('d/m/Y H:i') }}</small>
+                            @if($redemption->aprobado_por)
+                                <br><small>Aprobado el: {{ \Carbon\Carbon::parse($redemption->aprobado_por)->format('d/m/Y H:i') }}</small>
                             @endif
                         </div>
-                    @elseif($redemption->status == 'delivered')
+                    @elseif($redemption->estado == 'entregado')
                         <div class="alert alert-info">
                             <i class="fas fa-box-open"></i>
                             <strong>¡Recompensa entregada!</strong> 
                             Esperamos que disfrutes tu recompensa.
-                            @if($redemption->delivered_at)
-                                <br><small>Entregado el: {{ \Carbon\Carbon::parse($redemption->delivered_at)->format('d/m/Y H:i') }}</small>
+                            @if($redemption->fecha_entrega)
+                                <br><small>Entregado el: {{ \Carbon\Carbon::parse($redemption->fecha_entrega)->format('d/m/Y H:i') }}</small>
                             @endif
                         </div>
                     @else
                         <div class="alert alert-danger">
                             <i class="fas fa-times-circle"></i>
                             <strong>Este canje ha sido cancelado.</strong>
-                            @if($redemption->notes)
-                                <br>Motivo: {{ $redemption->notes }}
+                            @if($redemption->notas)
+                                <br>Motivo: {{ $redemption->notas }}
                             @endif
                         </div>
                     @endif
@@ -90,9 +90,9 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4 text-center mb-3 mb-md-0">
-                            @if($redemption->image)
-                                <img src="{{ asset('images/' . $redemption->image) }}" 
-                                     alt="{{ $redemption->title }}" 
+                            @if($redemption->imagen)
+                                <img src="{{ asset('images/' . $redemption->imagen) }}" 
+                                     alt="{{ $redemption->titulo }}" 
                                      class="img-fluid rounded shadow"
                                      style="max-height: 200px;">
                             @else
@@ -104,13 +104,13 @@
                             @endif
                         </div>
                         <div class="col-md-8">
-                            <h4 class="mb-3">{{ $redemption->title }}</h4>
+                            <h4 class="mb-3">{{ $redemption->titulo }}</h4>
                             
                             <div class="mb-3">
-                                <span class="badge bg-secondary">{{ ucfirst($redemption->category) }}</span>
+                                <span class="badge bg-secondary">{{ ucfirst($redemption->categoria) }}</span>
                             </div>
 
-                            <p class="text-muted">{{ $redemption->description }}</p>
+                            <p class="text-muted">{{ $redemption->descripcion }}</p>
 
                             <hr>
 
@@ -123,7 +123,7 @@
                                             <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display: inline;">
                                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                             </svg>
-                                            {{ number_format($redemption->points_used) }}
+                                            {{ number_format($redemption->puntos_utilizados) }}
                                         </span>
                                     </p>
                                 </div>
@@ -131,15 +131,15 @@
                                     <p class="mb-2">
                                         <strong>Fecha de canje:</strong>
                                         <br>
-                                        {{ \Carbon\Carbon::parse($redemption->created_at)->format('d/m/Y') }}
+                                        {{ \Carbon\Carbon::parse($redemption->fecha_creacion)->format('d/m/Y') }}
                                     </p>
                                 </div>
                             </div>
 
-                            @if($redemption->terms_conditions)
+                            @if($redemption->terminos_condiciones)
                             <div class="mt-3">
                                 <h6 class="text-muted small">Términos y Condiciones:</h6>
-                                <p class="small text-muted">{{ $redemption->terms_conditions }}</p>
+                                <p class="small text-muted">{{ $redemption->terminos_condiciones }}</p>
                             </div>
                             @endif
                         </div>
@@ -161,7 +161,7 @@
                     <div class="mb-3">
                         <div class="code-display p-4 bg-light rounded border border-primary">
                             <h2 class="mb-0 font-monospace text-primary fw-bold">
-                                {{ $redemption->redemption_code }}
+                                {{ $redemption->codigo_canje }}
                             </h2>
                         </div>
                     </div>
@@ -174,7 +174,7 @@ use Endroid\QrCode\Writer\SvgWriter;
 try {
     $builder = new Builder(
         writer: new SvgWriter(),
-        data: $redemption->redemption_code,
+        data: $redemption->codigo_canje,
         size: 200,
         margin: 10
     );
@@ -198,16 +198,16 @@ try {
 </p>
 
 <div class="d-grid gap-2">
-    <button class="btn btn-outline-primary btn-sm" onclick="copyCode('{{ $redemption->redemption_code }}')">
+    <button class="btn btn-outline-primary btn-sm" onclick="copyCode('{{ $redemption->codigo_canje }}')">
         <i class="fas fa-copy"></i> Copiar Código
     </button>
     
-    <a href="{{ route('usuario.canje.pdf', $redemption->redemption_id) }}" 
+    <a href="{{ route('usuario.canje.pdf', $redemption->canje_id) }}" 
        class="btn btn-primary btn-sm">
         <i class="fas fa-file-pdf"></i> Descargar Comprobante PDF
     </a>
     
-    <a href="{{ route('usuario.canje.email', $redemption->redemption_id) }}" 
+    <a href="{{ route('usuario.canje.email', $redemption->canje_id) }}" 
        class="btn btn-success btn-sm">
         <i class="fas fa-envelope"></i> Enviar por Correo
     </a>
@@ -230,27 +230,27 @@ try {
                             <strong>Fecha de solicitud:</strong>
                             <br>
                             <span class="text-muted">
-                                {{ \Carbon\Carbon::parse($redemption->created_at)->format('d/m/Y H:i:s') }}
+                                {{ \Carbon\Carbon::parse($redemption->fecha_creacion)->format('d/m/Y H:i:s') }}
                             </span>
                         </li>
                         <li class="mb-3">
                             <strong>Estado actual:</strong>
                             <br>
-                            @if($redemption->status == 'pending')
+                            @if($redemption->estado == 'pendiente')
                                 <span class="badge bg-warning text-dark">⏳ Pendiente</span>
-                            @elseif($redemption->status == 'approved')
+                            @elseif($redemption->estado == 'aprobado')
                                 <span class="badge bg-success">✅ Aprobado</span>
-                            @elseif($redemption->status == 'delivered')
+                            @elseif($redemption->estado == 'entregado')
                                 <span class="badge bg-info">📦 Entregado</span>
                             @else
                                 <span class="badge bg-danger">❌ Cancelado</span>
                             @endif
                         </li>
-                        @if($redemption->notes)
+                        @if($redemption->notas)
                         <li class="mb-0">
                             <strong>Notas:</strong>
                             <br>
-                            <span class="text-muted small">{{ $redemption->notes }}</span>
+                            <span class="text-muted small">{{ $redemption->notas }}</span>
                         </li>
                         @endif
                     </ul>

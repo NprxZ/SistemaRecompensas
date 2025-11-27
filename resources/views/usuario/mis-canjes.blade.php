@@ -30,13 +30,13 @@
                     <label class="form-label small fw-semibold">Filtrar por Estado</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
                         <option value="">Todos los estados</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                        <option value="pendiente" {{ request('status') == 'pendiente' ? 'selected' : '' }}>
                             ⏳ Pendiente
                         </option>
-                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
+                        <option value="aprobado" {{ request('status') == 'aprobado' ? 'selected' : '' }}>
                             ✅ Aprobado
                         </option>
-                        <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>
+                        <option value="entregado" {{ request('status') == 'entregado' ? 'selected' : '' }}>
                             📦 Entregado
                         </option>
                         <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>
@@ -62,9 +62,9 @@
                     <div class="row align-items-center">
                         <!-- Imagen de la recompensa -->
                         <div class="col-md-2 text-center">
-                            @if($redemption->image)
-                                <img src="{{ asset('images/' . $redemption->image) }}" 
-                                     alt="{{ $redemption->title }}" 
+                            @if($redemption->imagen)
+                                <img src="{{ asset('images/' . $redemption->imagen) }}" 
+                                     alt="{{ $redemption->titulo }}" 
                                      class="img-fluid rounded"
                                      style="max-height: 120px; object-fit: cover;">
                             @else
@@ -78,14 +78,14 @@
 
                         <!-- Información del canje -->
                         <div class="col-md-6">
-                            <h5 class="mb-2">{{ $redemption->title }}</h5>
+                            <h5 class="mb-2">{{ $redemption->titulo }}</h5>
                             <div class="mb-2">
-                                <span class="badge bg-secondary">{{ ucfirst($redemption->category) }}</span>
-                                @if($redemption->status == 'pending')
+                                <span class="badge bg-secondary">{{ ucfirst($redemption->categoria) }}</span>
+                                @if($redemption->estado == 'pendiente')
                                     <span class="badge bg-warning text-dark">⏳ Pendiente</span>
-                                @elseif($redemption->status == 'approved')
+                                @elseif($redemption->estado == 'aprobado')
                                     <span class="badge bg-success">✅ Aprobado</span>
-                                @elseif($redemption->status == 'delivered')
+                                @elseif($redemption->estado == 'entregado')
                                     <span class="badge bg-info">📦 Entregado</span>
                                 @else
                                     <span class="badge bg-danger">❌ Cancelado</span>
@@ -93,11 +93,11 @@
                             </div>
                             <p class="text-muted small mb-2">
                                 <i class="fas fa-calendar"></i> 
-                                Canjeado: {{ \Carbon\Carbon::parse($redemption->created_at)->format('d/m/Y H:i') }}
+                                Canjeado: {{ \Carbon\Carbon::parse($redemption->fecha_creacion)->format('d/m/Y H:i') }}
                             </p>
                             <p class="text-muted small mb-0">
                                 <i class="fas fa-barcode"></i> 
-                                Código: <strong class="text-primary">{{ $redemption->redemption_code }}</strong>
+                                Código: <strong class="text-primary">{{ $redemption->codigo_canje }}</strong>
                             </p>
                         </div>
 
@@ -109,10 +109,10 @@
                                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display: inline;">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>
-                                    {{ number_format($redemption->points_used) }}
+                                    {{ number_format($redemption->puntos_utilizados) }}
                                 </h4>
                             </div>
-                            <a href="{{ route('usuario.mis-canjes.detalle', $redemption->redemption_id) }}" 
+                            <a href="{{ route('usuario.mis-canjes.detalle', $redemption->canje_id) }}" 
                                class="btn btn-sm btn-primary">
                                 <i class="fas fa-eye"></i> Ver Detalles
                             </a>

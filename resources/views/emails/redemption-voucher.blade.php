@@ -191,13 +191,13 @@
         <!-- Header -->
         <div class="header">
             <h1>🎁 ¡Tu Canje está Listo!</h1>
-            <p>Comprobante de Canje #{{ $redemption->redemption_id }}</p>
+            <p>Comprobante de Canje #{{ $redemption->canje_id }}</p>
         </div>
 
         <!-- Content -->
         <div class="content">
             <p class="greeting">
-                Hola <strong>{{ $user->first_name }} {{ $user->last_name }}</strong>,
+                Hola <strong>{{ $user->nombre }} {{ $user->apellido }}</strong>,
             </p>
             <p class="greeting">
                 ¡Excelentes noticias! Tu solicitud de canje ha sido procesada exitosamente. 
@@ -207,7 +207,7 @@
             <!-- Código de Canje -->
             <div class="code-box">
                 <p>TU CÓDIGO DE CANJE</p>
-                <h2>{{ $redemption->redemption_code }}</h2>
+                <h2>{{ $redemption->codigo_canje }}</h2>
                 <p style="margin-top: 10px; font-size: 12px; font-weight: normal;">
                     Presenta este código para reclamar tu recompensa
                 </p>
@@ -218,22 +218,22 @@
                 <h3>📦 Detalles de tu Recompensa</h3>
                 <div class="info-row">
                     <span class="info-label">Recompensa:</span>
-                    <span class="info-value">{{ $redemption->title }}</span>
+                    <span class="info-value">{{ $redemption->titulo }}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Puntos Utilizados:</span>
-                    <span class="info-value">⭐ {{ number_format($redemption->points_used) }} puntos</span>
+                    <span class="info-value">⭐ {{ number_format($redemption->puntos_utilizados) }} puntos</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Fecha de Solicitud:</span>
-                    <span class="info-value">{{ \Carbon\Carbon::parse($redemption->created_at)->format('d/m/Y H:i') }}</span>
+                    <span class="info-value">{{ \Carbon\Carbon::parse($redemption->fecha_creacion)->format('d/m/Y H:i') }}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Estado:</span>
                     <span class="info-value">
-                        @if($redemption->status == 'approved')
+                        @if($redemption->estado == 'aprobado')
                             <span class="status-badge status-approved">✅ APROBADO</span>
-                        @elseif($redemption->status == 'pending')
+                        @elseif($redemption->estado == 'pendiente')
                             <span class="status-badge status-pending">⏳ PENDIENTE</span>
                         @endif
                     </span>
@@ -258,11 +258,11 @@
                 Puedes imprimirlo o mostrarlo desde tu dispositivo móvil.
             </p>
 
-            @if($redemption->terms_conditions)
+            @if($redemption->terminos_condiciones)
             <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
                 <p style="font-size: 12px; color: #6c757d; line-height: 1.6;">
                     <strong>Términos y Condiciones:</strong><br>
-                    {{ $redemption->terms_conditions }}
+                    {{ $redemption->terminos_condiciones }}
                 </p>
             </div>
             @endif

@@ -18,41 +18,41 @@ class RecompensasController extends Controller
     {
         $userId = Session::get('user_id');
         
-        $user = DB::table('users')
-            ->where('user_id', $userId)
+        $user = DB::table('usuarios')
+            ->where('usuario_id', $userId)
             ->first();
         
         if (!$user) {
             return redirect()->route('home')->with('error', 'Usuario no encontrado');
         }
         
-        $query = DB::table('rewards')
-            ->where('active', 1);
+        $query = DB::table('recompensas')
+            ->where('activo', 1);
         
         if ($request->has('category') && $request->category != '') {
-            $query->where('category', $request->category);
+            $query->where('categoria', $request->category);
         }
         
         if ($request->has('available')) {
             if ($request->available == 'yes') {
-                $query->where('stock', '>', 0);
+                $query->where('inventario', '>', 0);
             } elseif ($request->available == 'affordable') {
-                $query->where('stock', '>', 0)
-                      ->where('points_required', '<=', $user->points);
+                $query->where('inventario', '>', 0)
+                      ->where('puntos_requeridos', '<=', $user->puntos);
             }
         }
         
         $order = $request->get('order', 'points_asc');
         switch ($order) {
             case 'points_desc':
-                $query->orderBy('points_required', 'desc');
+                $query->orderBy('puntos_requeridos', 'desc');
                 break;
             case 'newest':
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('fecha_creacion', 'desc');
                 break;
             case 'points_asc':
             default:
-                $query->orderBy('points_required', 'asc');
+                $query->orderBy('puntos_requeridos', 'asc');
                 break;
         }
         
@@ -61,21 +61,21 @@ class RecompensasController extends Controller
         return view('usuario.recompensas.catalogo', compact('user', 'rewards'));
     }
     
-    public function detalle($reward_id)
+    public function detalle($recompensa_id)
     {
         $userId = Session::get('user_id');
         
-        $user = DB::table('users')
-            ->where('user_id', $userId)
+        $user = DB::table('usuarios')
+            ->where('usuario_id', $userId)
             ->first();
         
         if (!$user) {
             return redirect()->route('home')->with('error', 'Usuario no encontrado');
         }
         
-        $reward = DB::table('rewards')
-            ->where('reward_id', $reward_id)
-            ->where('active', 1)
+        $reward = DB::table('recompensas')
+            ->where('recompensa_id', $recompensa_id)
+            ->where('activo', 1)
             ->first();
         
         if (!$reward) {
@@ -86,15 +86,15 @@ class RecompensasController extends Controller
         return view('usuario.recompensas.detalle', compact('user', 'reward'));
     }
     
-    public function canjear(Request $request, $reward_id)
+    public function canjear(Request $request, $recompensa_id)
     {
         $userId = Session::get('user_id');
         
         DB::beginTransaction();
         
         try {
-            $user = DB::table('users')
-                ->where('user_id', $userId)
+            $user = DB::table('usuarios')
+                ->where('usuario_id', $userId)
                 ->lockForUpdate() 
                 ->first();
             
@@ -103,8 +103,8 @@ class RecompensasController extends Controller
                 return redirect()->route('home')->with('error', 'Usuario no encontrado');
             }
             
-            $reward = DB::table('rewards')
-                ->where('reward_id', $reward_id)
+            $reward = DB::table('recompensas')
+                ->where('recompensa_id', $recompensa_id)
                 ->lockForUpdate()
                 ->first();
             
@@ -113,73 +113,73 @@ class RecompensasController extends Controller
                 return back()->with('error', 'Recompensa no encontrada');
             }
             
-            if (!$reward->active) {
+            if (!$reward->activo) {
                 DB::rollBack();
                 return back()->with('error', 'Esta recompensa no está activa');
             }
             
-            if ($reward->stock <= 0) {
+            if ($reward->inventario <= 0) {
                 DB::rollBack();
                 return back()->with('error', 'Esta recompensa está agotada');
             }
             
-            if ($user->points < $reward->points_required) {
+            if ($user->puntos < $reward->puntos_requeridos) {
                 DB::rollBack();
                 return back()->with('error', 'No tienes suficientes puntos para canjear esta recompensa');
             }
             
-            if ($reward->expiration_date && $reward->expiration_date < now()) {
+            if ($reward->fecha_expiracion && $reward->fecha_expiracion < now()) {
                 DB::rollBack();
                 return back()->with('error', 'Esta recompensa ha expirado');
             }
             
             $redemptionCode = $this->generateRedemptionCode();
             
-            $redemptionId = DB::table('reward_redemptions')->insertGetId([
-                'user_id' => $userId,
-                'reward_id' => $reward_id,
-                'points_used' => $reward->points_required,
-                'status' => 'pending',
-                'redemption_code' => $redemptionCode,
-                'notes' => null,
-                'created_at' => now(),
-                'updated_at' => now()
+            $redemptionId = DB::table('canjes_recompensas')->insertGetId([
+                'usuario_id' => $userId,
+                'recompensa_id' => $recompensa_id,
+                'puntos_utilizados' => $reward->puntos_requeridos,
+                'estado' => 'pendiente',
+                'codigo_canje' => $redemptionCode,
+                'notas' => null,
+                'fecha_creacion' => now(),
+                'fecha_actualizacion' => now()
             ]);
             
-            DB::table('users')
-                ->where('user_id', $userId)
+            DB::table('usuarios')
+                ->where('usuario_id', $userId)
                 ->update([
-                    'points' => $user->points - $reward->points_required,
-                    'updated_at' => now()
+                    'puntos' => $user->puntos - $reward->puntos_requeridos,
+                    'fecha_actualizacion' => now()
                 ]);
             
-            Session::put('user_points', $user->points - $reward->points_required);
+            Session::put('user_points', $user->puntos - $reward->puntos_requeridos);
             
-            DB::table('rewards')
-                ->where('reward_id', $reward_id)
+            DB::table('recompensas')
+                ->where('recompensa_id', $recompensa_id)
                 ->update([
-                    'stock' => $reward->stock - 1,
-                    'updated_at' => now()
+                    'inventario' => $reward->inventario - 1,
+                    'fecha_actualizacion' => now()
                 ]);
             
-            DB::table('point_transactions')->insert([
-                'user_id' => $userId,
-                'type' => 'redeemed',
-                'points' => -$reward->points_required,
-                'description' => 'Canje de recompensa: ' . $reward->title,
-                'reward_id' => $reward_id,
-                'created_at' => now(),
-                'updated_at' => now()
+            DB::table('transacciones_puntos')->insert([
+                'usuario_id' => $userId,
+                'tipo' => 'canjeado',
+                'puntos' => -$reward->puntos_requeridos,
+                'descripcion' => 'Canje de recompensa: ' . $reward->titulo,
+                'recompensa_id' => $recompensa_id,
+                'fecha_creacion' => now(),
+                'fecha_actualizacion' => now()
             ]);
             
             DB::commit();
             
             Log::info('Canje exitoso', [
-                'user_id' => $userId,
-                'reward_id' => $reward_id,
-                'redemption_id' => $redemptionId,
-                'redemption_code' => $redemptionCode,
-                'points_used' => $reward->points_required
+                'usuario_id' => $userId,
+                'recompensa_id' => $recompensa_id,
+                'canje_id' => $redemptionId,
+                'codigo_canje' => $redemptionCode,
+                'puntos_utilizados' => $reward->puntos_requeridos
             ]);
             
             return redirect()->route('usuario.mis-canjes.detalle', $redemptionId)
@@ -188,8 +188,8 @@ class RecompensasController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al procesar canje: ' . $e->getMessage(), [
-                'user_id' => $userId,
-                'reward_id' => $reward_id,
+                'usuario_id' => $userId,
+                'recompensa_id' => $recompensa_id,
                 'trace' => $e->getTraceAsString()
             ]);
             
@@ -201,20 +201,20 @@ class RecompensasController extends Controller
     {
         $userId = Session::get('user_id');
         
-        $query = DB::table('reward_redemptions')
-            ->join('rewards', 'reward_redemptions.reward_id', '=', 'rewards.reward_id')
-            ->where('reward_redemptions.user_id', $userId)
+        $query = DB::table('canjes_recompensas')
+            ->join('recompensas', 'canjes_recompensas.recompensa_id', '=', 'recompensas.recompensa_id')
+            ->where('canjes_recompensas.usuario_id', $userId)
             ->select(
-                'reward_redemptions.*',
-                'rewards.title',
-                'rewards.description',
-                'rewards.image',
-                'rewards.category'
+                'canjes_recompensas.*',
+                'recompensas.titulo',
+                'recompensas.descripcion',
+                'recompensas.imagen',
+                'recompensas.categoria'
             )
-            ->orderBy('reward_redemptions.created_at', 'desc');
+            ->orderBy('canjes_recompensas.fecha_creacion', 'desc');
         
         if ($request->has('status') && $request->status != '') {
-            $query->where('reward_redemptions.status', $request->status);
+            $query->where('canjes_recompensas.estado', $request->status);
         }
         
         $redemptions = $query->paginate(10);
@@ -222,21 +222,21 @@ class RecompensasController extends Controller
         return view('usuario.mis-canjes', compact('redemptions'));
     }
     
-    public function detalleCanjes($redemption_id)
+    public function detalleCanjes($canje_id)
     {
         $userId = Session::get('user_id');
         
-        $redemption = DB::table('reward_redemptions')
-            ->join('rewards', 'reward_redemptions.reward_id', '=', 'rewards.reward_id')
-            ->where('reward_redemptions.redemption_id', $redemption_id)
-            ->where('reward_redemptions.user_id', $userId)
+        $redemption = DB::table('canjes_recompensas')
+            ->join('recompensas', 'canjes_recompensas.recompensa_id', '=', 'recompensas.recompensa_id')
+            ->where('canjes_recompensas.canje_id', $canje_id)
+            ->where('canjes_recompensas.usuario_id', $userId)
             ->select(
-                'reward_redemptions.*',
-                'rewards.title',
-                'rewards.description',
-                'rewards.image',
-                'rewards.category',
-                'rewards.terms_conditions'
+                'canjes_recompensas.*',
+                'recompensas.titulo',
+                'recompensas.descripcion',
+                'recompensas.imagen',
+                'recompensas.categoria',
+                'recompensas.terminos_condiciones'
             )
             ->first();
         
@@ -246,9 +246,9 @@ class RecompensasController extends Controller
         }
         
         $approvedBy = null;
-        if ($redemption->approved_by) {
-            $approvedBy = DB::table('administrators')
-                ->where('admin_id', $redemption->approved_by)
+        if ($redemption->aprobado_por) {
+            $approvedBy = DB::table('administradores')
+                ->where('administrador_id', $redemption->aprobado_por)
                 ->first();
         }
         
@@ -261,58 +261,59 @@ class RecompensasController extends Controller
         do {
             $code = strtoupper(Str::random(10));
             
-            $exists = DB::table('reward_redemptions')
-                ->where('redemption_code', $code)
+            $exists = DB::table('canjes_recompensas')
+                ->where('codigo_canje', $code)
                 ->exists();
                 
         } while ($exists);
         
         return $code;
     }
-    public function downloadRedemptionPDF($redemption_id)
-{
-    $userId = Session::get('user_id');
     
-    if (!$userId) {
-        return redirect()->route('usuario.login');
+    public function downloadRedemptionPDF($canje_id)
+    {
+        $userId = Session::get('user_id');
+        
+        if (!$userId) {
+            return redirect()->route('usuario.login');
+        }
+
+        $redemption = DB::table('canjes_recompensas as cr')
+            ->join('recompensas as r', 'cr.recompensa_id', '=', 'r.recompensa_id')
+            ->where('cr.canje_id', $canje_id)
+            ->where('cr.usuario_id', $userId)
+            ->select(
+                'cr.*',
+                'r.titulo',
+                'r.descripcion',
+                'r.imagen',
+                'r.categoria',
+                'r.terminos_condiciones'
+            )
+            ->first();
+
+        if (!$redemption) {
+            return redirect()->route('usuario.mis-canjes')
+                ->withErrors(['error' => 'Canje no encontrado']);
+        }
+
+        $result = Builder::create()
+            ->writer(new SvgWriter())
+            ->data($redemption->codigo_canje)
+            ->size(200)
+            ->margin(10)
+            ->build();
+
+        $qrCode = base64_encode($result->getString());
+
+        $user = DB::table('usuarios')->where('usuario_id', $userId)->first();
+
+        $pdf = PDF::loadView('pdf.redemption-voucher', [
+            'redemption' => $redemption,
+            'user' => $user,
+            'qrCode' => $qrCode
+        ]);
+
+        return $pdf->download('canje-' . $redemption->codigo_canje . '.pdf');
     }
-
-    $redemption = DB::table('redemptions as r')
-        ->join('rewards as rw', 'r.reward_id', '=', 'rw.reward_id')
-        ->where('r.redemption_id', $redemption_id)
-        ->where('r.user_id', $userId)
-        ->select(
-            'r.*',
-            'rw.title',
-            'rw.description',
-            'rw.image',
-            'rw.category',
-            'rw.terms_conditions'
-        )
-        ->first();
-
-    if (!$redemption) {
-        return redirect()->route('usuario.mis-canjes')
-            ->withErrors(['error' => 'Canje no encontrado']);
-    }
-
-    $result = Builder::create()
-        ->writer(new SvgWriter())
-        ->data($redemption->redemption_code)
-        ->size(200)
-        ->margin(10)
-        ->build();
-
-    $qrCode = base64_encode($result->getString());
-
-    $user = DB::table('users')->where('user_id', $userId)->first();
-
-    $pdf = PDF::loadView('pdf.redemption-voucher', [
-        'redemption' => $redemption,
-        'user' => $user,
-        'qrCode' => $qrCode
-    ]);
-
-    return $pdf->download('canje-' . $redemption->redemption_code . '.pdf');
-}
 }
